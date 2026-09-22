@@ -16,10 +16,10 @@ class SceneCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: scene.color.withOpacity(0.08),
+          color: scene.color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: scene.color.withOpacity(0.2),
+            color: scene.color.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -31,7 +31,7 @@ class SceneCard extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: scene.color.withOpacity(0.15),
+                color: scene.color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(scene.icon, color: scene.color, size: 18),
@@ -86,7 +86,7 @@ class AutomationRow extends StatelessWidget {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: scene.color.withOpacity(0.1),
+              color: scene.color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(scene.icon, color: scene.color, size: 18),

@@ -83,7 +83,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                   Icon(
                     widget.device.icon,
                     size: 64,
-                    color: Colors.white.withOpacity(_isOn ? 1 : 0.5),
+                    color: Colors.white.withValues(alpha: _isOn ? 1 : 0.5),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -99,7 +99,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                     widget.device.room,
                     style: GoogleFonts.inter(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -111,10 +111,10 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                       height: 64,
                       decoration: BoxDecoration(
                         color: Colors.white
-                            .withOpacity(_isOn ? 0.25 : 0.1),
+                            .withValues(alpha: _isOn ? 0.25 : 0.1),
                         shape: BoxShape.circle,
                         border: Border.all(
-                            color: Colors.white.withOpacity(0.5), width: 2),
+                            color: Colors.white.withValues(alpha: 0.5), width: 2),
                       ),
                       child: Icon(
                         Icons.power_settings_new_rounded,
@@ -129,7 +129,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -283,7 +283,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(Icons.add_rounded, color: AppColors.primary),
@@ -378,7 +378,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                 icon: const Icon(Icons.linear_scale_rounded, size: 16),
                 label: const Text('Half'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accentOrange.withOpacity(0.1),
+                  backgroundColor: AppColors.accentOrange.withValues(alpha: 0.1),
                   foregroundColor: AppColors.accentOrange,
                   elevation: 0,
                 ),
@@ -389,7 +389,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                     size: 16),
                 label: const Text('Open'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary.withOpacity(0.1),
+                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                   foregroundColor: AppColors.primary,
                   elevation: 0,
                 ),
@@ -499,11 +499,11 @@ class _ModeButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
         color: isSelected
-            ? AppColors.primary.withOpacity(0.1)
+            ? AppColors.primary.withValues(alpha: 0.1)
             : const Color(0xFFF1F5F9),
         borderRadius: BorderRadius.circular(10),
         border: isSelected
-            ? Border.all(color: AppColors.primary.withOpacity(0.3))
+            ? Border.all(color: AppColors.primary.withValues(alpha: 0.3))
             : null,
       ),
       child: Row(
@@ -570,7 +570,7 @@ class _ScheduleRow extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.08),
+              color: AppColors.primary.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(Icons.schedule_rounded,

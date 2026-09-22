@@ -98,13 +98,13 @@ class _SecurityScreenState extends State<SecurityScreen> {
                       horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
                     color: _alarmArmed
-                        ? AppColors.error.withOpacity(0.1)
-                        : AppColors.active.withOpacity(0.1),
+                        ? AppColors.error.withValues(alpha: 0.1)
+                        : AppColors.active.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: _alarmArmed
-                          ? AppColors.error.withOpacity(0.3)
-                          : AppColors.active.withOpacity(0.3),
+                          ? AppColors.error.withValues(alpha: 0.3)
+                          : AppColors.active.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -152,7 +152,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
               color: const Color(0xFF0F172A),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: AppColors.primary.withOpacity(0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 width: 1.5,
               ),
             ),
@@ -175,20 +175,20 @@ class _SecurityScreenState extends State<SecurityScreen> {
                         children: [
                           Icon(Icons.videocam_rounded,
                               size: 48,
-                              color: Colors.white.withOpacity(0.3)),
+                              color: Colors.white.withValues(alpha: 0.3)),
                           const SizedBox(height: 8),
                           Text(
                             _cameras[_selectedCamera]['name'],
                             style: GoogleFonts.inter(
                               fontSize: 16,
-                              color: Colors.white.withOpacity(0.5),
+                              color: Colors.white.withValues(alpha: 0.5),
                             ),
                           ),
                           Text(
                             'Live Feed',
                             style: GoogleFonts.inter(
                               fontSize: 12,
-                              color: Colors.white.withOpacity(0.3),
+                              color: Colors.white.withValues(alpha: 0.3),
                             ),
                           ),
                         ],
@@ -286,7 +286,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
               margin: const EdgeInsets.only(right: 10),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppColors.primary.withOpacity(0.08)
+                    ? AppColors.primary.withValues(alpha: 0.08)
                     : Colors.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
@@ -430,8 +430,8 @@ class _SecurityScreenState extends State<SecurityScreen> {
               height: 56,
               decoration: BoxDecoration(
                 color: _doorLocked
-                    ? AppColors.accentBlue.withOpacity(0.1)
-                    : AppColors.accentGreen.withOpacity(0.1),
+                    ? AppColors.accentBlue.withValues(alpha: 0.1)
+                    : AppColors.accentGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(
@@ -543,7 +543,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: (e['color'] as Color).withOpacity(0.1),
+                      color: (e['color'] as Color).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(e['icon'] as IconData,
@@ -596,7 +596,7 @@ class _CameraControlBtn extends StatelessWidget {
         width: 34,
         height: 34,
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.4),
+          color: Colors.black.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, color: Colors.white, size: 16),
@@ -637,7 +637,7 @@ class _ActionCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: 20),

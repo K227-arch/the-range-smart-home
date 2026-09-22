@@ -29,21 +29,21 @@ class DeviceCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isOn
-                ? AppColors.primary.withOpacity(0.15)
+                ? AppColors.primary.withValues(alpha: 0.15)
                 : const Color(0xFFE2E8F0),
             width: 1.2,
           ),
           boxShadow: isOn
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.08),
+                    color: AppColors.primary.withValues(alpha: 0.08),
                     blurRadius: 16,
                     offset: const Offset(0, 4),
                   ),
                 ]
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -62,8 +62,8 @@ class DeviceCard extends StatelessWidget {
                   height: 38,
                   decoration: BoxDecoration(
                     color: isOn
-                        ? device.iconColor.withOpacity(0.12)
-                        : const Color(0xFFEEF2FF).withOpacity(0.5),
+                        ? device.iconColor.withValues(alpha: 0.12)
+                        : const Color(0xFFEEF2FF).withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -226,7 +226,7 @@ class _ProtocolBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(

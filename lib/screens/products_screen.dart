@@ -269,7 +269,7 @@ class _CategoryCardState extends State<_CategoryCard> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(cat['icon'] as IconData,
@@ -327,7 +327,7 @@ class _CategoryCardState extends State<_CategoryCard> {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: color.withOpacity(0.06),
+                        color: color.withValues(alpha: 0.06),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child:

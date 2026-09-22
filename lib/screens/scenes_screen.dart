@@ -250,7 +250,7 @@ class _GoHomeBanner extends StatelessWidget {
             'Tap to activate welcome home scene',
             style: GoogleFonts.inter(
               fontSize: 13,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: 16),
@@ -333,7 +333,7 @@ class _AddSceneButton extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             style: BorderStyle.solid,
             width: 1.5,
           ),

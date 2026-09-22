@@ -115,7 +115,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           decoration: BoxDecoration(
                             color: _currentPage == i
                                 ? Colors.white
-                                : Colors.white.withOpacity(0.4),
+                                : Colors.white.withValues(alpha: 0.4),
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
@@ -134,11 +134,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 14),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.15),
+                                  color: Colors.white.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
                                       color:
-                                          Colors.white.withOpacity(0.3)),
+                                          Colors.white.withValues(alpha: 0.3)),
                                 ),
                                 child: Text(
                                   'Skip',
@@ -228,7 +228,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -250,7 +250,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(28),
             ),
             child: Icon(page.icon, color: Colors.white, size: 52),
@@ -274,7 +274,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             page.subtitle,
             style: GoogleFonts.inter(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               height: 1.5,
             ),
           ),
@@ -285,7 +285,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             padding:
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(

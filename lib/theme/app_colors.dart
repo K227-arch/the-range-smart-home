@@ -77,7 +77,7 @@ class AppColors {
   // Card shadows
   static List<BoxShadow> cardShadow = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.08),
+      color: Colors.black.withValues(alpha: 0.08),
       blurRadius: 12,
       offset: const Offset(0, 4),
     ),
@@ -85,7 +85,7 @@ class AppColors {
 
   static List<BoxShadow> elevatedShadow = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.15),
+      color: Colors.black.withValues(alpha: 0.15),
       blurRadius: 20,
       offset: const Offset(0, 8),
     ),

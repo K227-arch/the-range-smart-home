@@ -89,7 +89,7 @@ class EnergyScreen extends StatelessWidget {
                       'This week',
                       style: GoogleFonts.inter(
                         fontSize: 13,
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                       ),
                     ),
                     Row(
@@ -111,7 +111,7 @@ class EnergyScreen extends StatelessWidget {
                             'kWh',
                             style: GoogleFonts.inter(
                               fontSize: 18,
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.white.withValues(alpha: 0.8),
                             ),
                           ),
                         ),
@@ -123,7 +123,7 @@ class EnergyScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(
@@ -132,7 +132,7 @@ class EnergyScreen extends StatelessWidget {
                         'Saved',
                         style: GoogleFonts.inter(
                           fontSize: 11,
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                         ),
                       ),
                       Text(
@@ -147,7 +147,7 @@ class EnergyScreen extends StatelessWidget {
                         'kWh',
                         style: GoogleFonts.inter(
                           fontSize: 11,
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -209,7 +209,7 @@ class EnergyScreen extends StatelessWidget {
                     _LegendDot(color: AppColors.primary, label: 'kWh'),
                     const SizedBox(width: 12),
                     _LegendDot(
-                        color: AppColors.active.withOpacity(0.4),
+                        color: AppColors.active.withValues(alpha: 0.4),
                         label: 'Saved'),
                   ],
                 ),
@@ -324,7 +324,7 @@ class EnergyScreen extends StatelessWidget {
           color: const Color(0xFFEFF6FF),
           borderRadius: BorderRadius.circular(18),
           border:
-              Border.all(color: AppColors.primary.withOpacity(0.2)),
+              Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
         ),
         child: Row(
           children: [
@@ -332,7 +332,7 @@ class EnergyScreen extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(Icons.auto_awesome_rounded,
@@ -378,11 +378,6 @@ class EnergyScreen extends StatelessWidget {
   }
 
   Widget _buildConsumptionDetails() {
-    final items = [
-      {'label': 'Energy consumption details', 'icon': Icons.bolt_rounded},
-      {'label': 'Energy consumption details', 'icon': Icons.bolt_rounded},
-    ];
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
@@ -551,7 +546,7 @@ class _PeriodBtn extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.white.withOpacity(0.2),
+          color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -561,7 +556,7 @@ class _PeriodBtn extends StatelessWidget {
             fontWeight: FontWeight.w600,
             color: isSelected
                 ? AppColors.accentGreen
-                : Colors.white.withOpacity(0.7),
+                : Colors.white.withValues(alpha: 0.7),
           ),
         ),
       ),

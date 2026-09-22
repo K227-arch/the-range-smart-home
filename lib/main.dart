@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'models/app_state.dart';
 import 'theme/app_theme.dart';
-import 'screens/main_shell.dart';
 import 'screens/onboarding_screen.dart';
 
 void main() {

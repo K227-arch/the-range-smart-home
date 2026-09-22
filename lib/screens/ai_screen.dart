@@ -242,7 +242,7 @@ class _ChatTab extends StatelessWidget {
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color:
-                                    AppColors.primary.withOpacity(0.2),
+                                    AppColors.primary.withValues(alpha: 0.2),
                               ),
                             ),
                             child: Row(
@@ -302,10 +302,10 @@ class _QuickCommandRow extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
-                  color: (c['color'] as Color).withOpacity(0.08),
+                  color: (c['color'] as Color).withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (c['color'] as Color).withOpacity(0.2),
+                    color: (c['color'] as Color).withValues(alpha: 0.2),
                   ),
                 ),
                 child: Row(
@@ -378,7 +378,7 @@ class _ChatBubble extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -608,7 +608,7 @@ class _AIServicesTab extends StatelessWidget {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: (s['color'] as Color).withOpacity(0.1),
+                      color: (s['color'] as Color).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(s['icon'] as IconData,
@@ -634,7 +634,7 @@ class _AIServicesTab extends StatelessWidget {
                                     horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
                                   color: AppColors.primary
-                                      .withOpacity(0.1),
+                                      .withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -724,7 +724,7 @@ class _HealthTab extends StatelessWidget {
                         CircularProgressIndicator(
                           value: 0.72,
                           strokeWidth: 8,
-                          backgroundColor: AppColors.accentRed.withOpacity(0.15),
+                          backgroundColor: AppColors.accentRed.withValues(alpha: 0.15),
                           valueColor: const AlwaysStoppedAnimation(AppColors.accentRed),
                         ),
                         Padding(
@@ -732,7 +732,7 @@ class _HealthTab extends StatelessWidget {
                           child: CircularProgressIndicator(
                             value: 0.55,
                             strokeWidth: 6,
-                            backgroundColor: AppColors.accentGreen.withOpacity(0.15),
+                            backgroundColor: AppColors.accentGreen.withValues(alpha: 0.15),
                             valueColor: const AlwaysStoppedAnimation(AppColors.accentGreen),
                           ),
                         ),
@@ -741,7 +741,7 @@ class _HealthTab extends StatelessWidget {
                           child: CircularProgressIndicator(
                             value: 0.8,
                             strokeWidth: 4,
-                            backgroundColor: AppColors.accentBlue.withOpacity(0.15),
+                            backgroundColor: AppColors.accentBlue.withValues(alpha: 0.15),
                             valueColor: const AlwaysStoppedAnimation(AppColors.accentBlue),
                           ),
                         ),
@@ -767,7 +767,7 @@ class _HealthTab extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.accentGreen.withOpacity(0.08),
+                  color: AppColors.accentGreen.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
@@ -902,7 +902,7 @@ class _HealthTab extends StatelessWidget {
                         height: heights[i].toDouble(),
                         margin: const EdgeInsets.symmetric(horizontal: 1),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.6),
+                          color: AppColors.primary.withValues(alpha: 0.6),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       );
@@ -974,7 +974,7 @@ class _HealthTab extends StatelessWidget {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: AppColors.accentOrange.withOpacity(0.1),
+                        color: AppColors.accentOrange.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.chat_bubble_rounded,

@@ -12,12 +12,10 @@ class AppTheme {
         primary: AppColors.primary,
         secondary: AppColors.accentCyan,
         surface: AppColors.bgWhite,
-        background: AppColors.bgLight,
         error: AppColors.error,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
         onSurface: AppColors.textPrimary,
-        onBackground: AppColors.textPrimary,
       ),
       scaffoldBackgroundColor: AppColors.bgLight,
       textTheme: GoogleFonts.interTextTheme().copyWith(
@@ -99,7 +97,7 @@ class AppTheme {
           color: AppColors.textPrimary,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.bgWhite,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -114,12 +112,11 @@ class AppTheme {
         elevation: 0,
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) return Colors.white;
+        thumbColor: WidgetStateProperty.resolveWith((states) {
           return Colors.white;
         }),
-        trackColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) {
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
             return AppColors.toggleOn;
           }
           return AppColors.toggleOff;
@@ -152,12 +149,10 @@ class AppTheme {
         primary: AppColors.primary,
         secondary: AppColors.accentCyan,
         surface: AppColors.bgCard,
-        background: AppColors.bgDark,
         error: AppColors.error,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
         onSurface: AppColors.textOnDark,
-        onBackground: AppColors.textOnDark,
       ),
       scaffoldBackgroundColor: AppColors.bgDark,
       textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
@@ -172,7 +167,7 @@ class AppTheme {
           color: AppColors.textOnDark,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.bgCard,
         elevation: 0,
         shape: RoundedRectangleBorder(
