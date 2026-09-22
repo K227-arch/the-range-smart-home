@@ -120,61 +120,6 @@ class MainShell extends StatelessWidget {
                   ),
                 );
               }),
-
-              // ── Dark / Light mode toggle ───────────────────────────────
-              GestureDetector(
-                onTap: () => state.toggleTheme(),
-                behavior: HitTestBehavior.opaque,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? AppColors.accentYellow.withValues(alpha: 0.12)
-                        : AppColors.bgDark.withValues(alpha: 0.07),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Animated icon swap
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 350),
-                        transitionBuilder: (child, anim) => RotationTransition(
-                          turns: anim,
-                          child: FadeTransition(opacity: anim, child: child),
-                        ),
-                        child: Icon(
-                          isDark
-                              ? Icons.wb_sunny_rounded       // in dark → show sun (switch to light)
-                              : Icons.nightlight_round,      // in light → show moon (switch to dark)
-                          key: ValueKey(isDark),
-                          size: 22,
-                          color: isDark
-                              ? AppColors.accentYellow
-                              : AppColors.bgDark,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 250),
-                        child: Text(
-                          isDark ? 'Light' : 'Dark',
-                          key: ValueKey('label_$isDark'),
-                          style: GoogleFonts.inter(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                            color: isDark
-                                ? AppColors.accentYellow
-                                : AppColors.bgDark,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ],
           ),
         ),

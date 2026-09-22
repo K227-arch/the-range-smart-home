@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../models/app_state.dart';
+import '../models/device.dart';
 import '../theme/app_colors.dart';
 import '../theme/theme_helper.dart';
 
@@ -61,6 +64,7 @@ class ProductsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
+    final state = context.watch<AppState>();
     return Scaffold(
       backgroundColor: th.screenBg,
       body: SafeArea(
@@ -72,12 +76,235 @@ class ProductsScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
-                  (context, i) => _CategoryCard(category: _categories[i]),
+                  (context, i) => _CategoryCard(
+                    category: _categories[i],
+                    onAdd: (productName, categoryData) =>
+                        _showAddToHomeSheet(
+                            context, state, th, productName, categoryData),
+                  ),
                   childCount: _categories.length,
                 ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showAddToHomeSheet(
+    BuildContext context,
+    AppState state,
+    ThemeHelper th,
+    String productName,
+    Map<String, dynamic> categoryData,
+  ) {
+    final nameCtrl = TextEditingController(text: productName);
+    String? selectedRoom;
+    final icon = categoryData['icon'] as IconData;
+    final color = categoryData['color'] as Color;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: th.cardBg,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheet) => Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Handle
+                Center(
+                  child: Container(
+                    width: 40, height: 4,
+                    decoration: BoxDecoration(
+                        color: th.divider,
+                        borderRadius: BorderRadius.circular(2)),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Product preview row
+                Row(
+                  children: [
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(icon, color: color, size: 26),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Add to Home',
+                              style: GoogleFonts.inter(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: th.textPrimary)),
+                          const SizedBox(height: 2),
+                          Text(categoryData['title'] as String,
+                              style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: th.textSecondary)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+
+                // Device name
+                Text('Device name',
+                    style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: th.textSecondary)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: nameCtrl,
+                  style: GoogleFonts.inter(
+                      fontSize: 14, color: th.textPrimary),
+                  decoration: InputDecoration(
+                    hintText: 'Name your device',
+                    hintStyle: GoogleFonts.inter(color: th.textHint),
+                    filled: true,
+                    fillColor: th.inputFill,
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Room picker
+                Text('Add to room',
+                    style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: th.textSecondary)),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: state.rooms
+                      .where((r) => r.id != 'all')
+                      .map((r) {
+                    final isSel = selectedRoom == r.name;
+                    return GestureDetector(
+                      onTap: () =>
+                          setSheet(() => selectedRoom = r.name),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 150),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isSel
+                              ? AppColors.primary
+                                  .withValues(alpha: 0.12)
+                              : th.chipBg,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isSel
+                                ? AppColors.primary
+                                : Colors.transparent,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Text(r.name,
+                            style: GoogleFonts.inter(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: isSel
+                                    ? AppColors.primary
+                                    : th.textSecondary)),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 28),
+
+                // Save
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final name = nameCtrl.text.trim();
+                      if (name.isEmpty || selectedRoom == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'Please name the device and pick a room',
+                                style: GoogleFonts.inter()),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(12)),
+                          ),
+                        );
+                        return;
+                      }
+                      state.addDevice(Device(
+                        id: 'prod_${DateTime.now().millisecondsSinceEpoch}',
+                        name: name,
+                        room: selectedRoom!,
+                        type: DeviceType.switch_,
+                        status: DeviceStatus.online,
+                        protocol: ProtocolType.wifi,
+                        isOn: false,
+                        icon: icon,
+                        iconColor: color,
+                      ));
+                      Navigator.pop(ctx);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Row(children: [
+                            const Icon(Icons.check_circle_rounded,
+                                color: Colors.white, size: 18),
+                            const SizedBox(width: 8),
+                            Text('"$name" added to $selectedRoom',
+                                style: GoogleFonts.inter()),
+                          ]),
+                          backgroundColor: AppColors.active,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                      elevation: 0,
+                    ),
+                    child: Text('Add to Home',
+                        style: GoogleFonts.inter(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700)),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -190,8 +417,9 @@ class ProductsScreen extends StatelessWidget {
 
 class _CategoryCard extends StatefulWidget {
   final Map<String, dynamic> category;
+  final void Function(String productName, Map<String, dynamic> categoryData) onAdd;
 
-  const _CategoryCard({required this.category});
+  const _CategoryCard({required this.category, required this.onAdd});
 
   @override
   State<_CategoryCard> createState() => _CategoryCardState();
@@ -292,7 +520,8 @@ class _CategoryCardState extends State<_CategoryCard> {
                             fontWeight: FontWeight.w500,
                             color: th.textPrimary)),
                     trailing: TextButton(
-                      onPressed: () {},
+                      onPressed: () =>
+                          widget.onAdd(p, cat),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.primary,
                         padding: EdgeInsets.zero,

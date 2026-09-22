@@ -19,6 +19,12 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
   double _temperature = 22;
   double _curtainPosition = 50;
 
+  // Schedule entries: {time, label, days}
+  final List<Map<String, String>> _schedules = [
+    {'time': '07:00', 'label': 'Turn On',  'days': 'Mon–Fri'},
+    {'time': '22:30', 'label': 'Turn Off', 'days': 'Every day'},
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -430,7 +436,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                       fontSize: 15,
                       color: th.textPrimary)),
               TextButton.icon(
-                onPressed: () {},
+                onPressed: () => _showAddScheduleSheet(context, th),
                 icon: const Icon(Icons.add_rounded, size: 16),
                 label: const Text('Add'),
                 style: TextButton.styleFrom(
@@ -440,17 +446,301 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
             ],
           ),
           const SizedBox(height: 8),
-          _ScheduleRow(
-              time: '07:00',
-              label: 'Turn On',
-              days: 'Mon–Fri',
-              th: th),
-          _ScheduleRow(
-              time: '22:30',
-              label: 'Turn Off',
-              days: 'Every day',
-              th: th),
+          ..._schedules.map((s) => _ScheduleRow(
+                time: s['time']!,
+                label: s['label']!,
+                days: s['days']!,
+                th: th,
+              )),
         ],
+      ),
+    );
+  }
+
+  void _showAddScheduleSheet(BuildContext context, ThemeHelper th) {
+    // Defaults
+    TimeOfDay selectedTime = const TimeOfDay(hour: 8, minute: 0);
+    String selectedAction = 'Turn On';
+    final List<String> weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    final Set<String> selectedDays = {'Mon', 'Tue', 'Wed', 'Thu', 'Fri'};
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: th.cardBg,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheet) => Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Handle
+                Center(
+                  child: Container(
+                    width: 40, height: 4,
+                    decoration: BoxDecoration(
+                        color: th.divider,
+                        borderRadius: BorderRadius.circular(2)),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text('Add Schedule',
+                    style: GoogleFonts.inter(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: th.textPrimary)),
+                const SizedBox(height: 4),
+                Text('Pick a time, action and repeat days',
+                    style: GoogleFonts.inter(
+                        fontSize: 13, color: th.textSecondary)),
+                const SizedBox(height: 24),
+
+                // Time picker row
+                Text('Time',
+                    style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: th.textSecondary)),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () async {
+                    final picked = await showTimePicker(
+                      context: ctx,
+                      initialTime: selectedTime,
+                      builder: (c, child) => Theme(
+                        data: Theme.of(c).copyWith(
+                          colorScheme: ColorScheme.light(
+                            primary: AppColors.primary,
+                            surface: th.cardBg,
+                            onSurface: th.textPrimary,
+                          ),
+                          dialogTheme: DialogThemeData(
+                              backgroundColor: th.cardBg),
+                        ),
+                        child: child!,
+                      ),
+                    );
+                    if (picked != null) {
+                      setSheet(() => selectedTime = picked);
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: AppColors.primary
+                              .withValues(alpha: 0.2)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.schedule_rounded,
+                            color: AppColors.primary, size: 20),
+                        const SizedBox(width: 12),
+                        Text(
+                          selectedTime.format(ctx),
+                          style: GoogleFonts.inter(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primary),
+                        ),
+                        const Spacer(),
+                        Text('Tap to change',
+                            style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: th.textSecondary)),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Action
+                Text('Action',
+                    style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: th.textSecondary)),
+                const SizedBox(height: 10),
+                Row(
+                  children: ['Turn On', 'Turn Off'].map((action) {
+                    final isSel = selectedAction == action;
+                    return Expanded(
+                      child: GestureDetector(
+                        onTap: () =>
+                            setSheet(() => selectedAction = action),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          margin: EdgeInsets.only(
+                              right: action == 'Turn On' ? 8 : 0),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12),
+                          decoration: BoxDecoration(
+                            color: isSel
+                                ? AppColors.primary
+                                    .withValues(alpha: 0.12)
+                                : th.chipBg,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isSel
+                                  ? AppColors.primary
+                                  : Colors.transparent,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(action,
+                                style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: isSel
+                                        ? AppColors.primary
+                                        : th.textSecondary)),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 20),
+
+                // Repeat days
+                Text('Repeat',
+                    style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: th.textSecondary)),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: weekDays.map((day) {
+                    final isSel = selectedDays.contains(day);
+                    return GestureDetector(
+                      onTap: () => setSheet(() {
+                        if (isSel) {
+                          selectedDays.remove(day);
+                        } else {
+                          selectedDays.add(day);
+                        }
+                      }),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 150),
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: isSel
+                              ? AppColors.primary
+                              : th.chipBg,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSel
+                                ? AppColors.primary
+                                : Colors.transparent,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(day.substring(0, 1),
+                              style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: isSel
+                                      ? Colors.white
+                                      : th.textSecondary)),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 28),
+
+                // Save
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (selectedDays.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'Select at least one day',
+                                style: GoogleFonts.inter()),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(12)),
+                          ),
+                        );
+                        return;
+                      }
+                      // Build days label
+                      String daysLabel;
+                      if (selectedDays.length == 7) {
+                        daysLabel = 'Every day';
+                      } else if (selectedDays.containsAll(
+                              ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']) &&
+                          selectedDays.length == 5) {
+                        daysLabel = 'Mon–Fri';
+                      } else {
+                        final order = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+                        daysLabel = order
+                            .where((d) => selectedDays.contains(d))
+                            .join(', ');
+                      }
+                      final h =
+                          selectedTime.hour.toString().padLeft(2, '0');
+                      final m =
+                          selectedTime.minute.toString().padLeft(2, '0');
+                      setState(() => _schedules.add({
+                            'time': '$h:$m',
+                            'label': selectedAction,
+                            'days': daysLabel,
+                          }));
+                      Navigator.pop(ctx);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Row(children: [
+                            const Icon(Icons.check_circle_rounded,
+                                color: Colors.white, size: 18),
+                            const SizedBox(width: 8),
+                            Text(
+                                'Schedule added: $h:$m · $selectedAction',
+                                style: GoogleFonts.inter()),
+                          ]),
+                          backgroundColor: AppColors.active,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                      elevation: 0,
+                    ),
+                    child: Text('Save Schedule',
+                        style: GoogleFonts.inter(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

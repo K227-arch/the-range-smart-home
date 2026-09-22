@@ -15,7 +15,8 @@ class AppState extends ChangeNotifier {
   }
 
   // ─── Rooms & Devices ──────────────────────────────────────────────────────
-  List<Room> get rooms => MockData.rooms;
+  List<Room> _rooms = List.from(MockData.rooms);
+  List<Room> get rooms => _rooms;
   List<Device> _devices = List.from(MockData.devices);
   List<Device> get devices => _devices;
 
@@ -49,14 +50,56 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addDevice(Device device) {
+    _devices = [..._devices, device];
+    // Also bump the room's deviceCount
+    _rooms = _rooms.map((r) {
+      if (r.name == device.room) {
+        return Room(
+          id: r.id,
+          name: r.name,
+          deviceCount: r.deviceCount + 1,
+          activeCount: device.isOn ? r.activeCount + 1 : r.activeCount,
+        );
+      }
+      // Always update the 'all' room total
+      if (r.id == 'all') {
+        return Room(
+          id: r.id,
+          name: r.name,
+          deviceCount: r.deviceCount + 1,
+          activeCount: device.isOn ? r.activeCount + 1 : r.activeCount,
+        );
+      }
+      return r;
+    }).toList();
+    notifyListeners();
+  }
+
+  void addRoom(Room room) {
+    _rooms = [..._rooms, room];
+    notifyListeners();
+  }
+
   int get activeDeviceCount => _devices.where((d) => d.isOn).length;
 
   // ─── Scenes ───────────────────────────────────────────────────────────────
-  List<Scene> get tapToRunScenes => MockData.tapToRunScenes;
-  List<Scene> get automationScenes => MockData.automationScenes;
+  List<Scene> _tapToRunScenes = List.from(MockData.tapToRunScenes);
+  List<Scene> _automationScenes = List.from(MockData.automationScenes);
+  List<Scene> get tapToRunScenes => _tapToRunScenes;
+  List<Scene> get automationScenes => _automationScenes;
 
   void runScene(String sceneId) {
     // In production: fire MQTT / Tuya commands
+    notifyListeners();
+  }
+
+  void addScene(Scene scene) {
+    if (scene.type == SceneType.tapToRun) {
+      _tapToRunScenes = [..._tapToRunScenes, scene];
+    } else {
+      _automationScenes = [..._automationScenes, scene];
+    }
     notifyListeners();
   }
 
@@ -97,6 +140,11 @@ class AppState extends ChangeNotifier {
       });
       notifyListeners();
     });
+    notifyListeners();
+  }
+
+  void clearChat() {
+    _chatHistory = [];
     notifyListeners();
   }
 

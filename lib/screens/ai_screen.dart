@@ -58,7 +58,7 @@ class _AIScreenState extends State<AIScreen>
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopBar(th),
+            _buildTopBar(state, th),
             _buildTabBar(th),
             Expanded(
               child: TabBarView(
@@ -82,7 +82,85 @@ class _AIScreenState extends State<AIScreen>
     );
   }
 
-  Widget _buildTopBar(ThemeHelper th) {
+  void _showNewChatDialog(
+      BuildContext context, AppState state, ThemeHelper th) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: th.cardBg,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                gradient: AppColors.aiGradient,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.auto_awesome_rounded,
+                  color: Colors.white, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Text('New Chat',
+                style: GoogleFonts.inter(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: th.textPrimary)),
+          ],
+        ),
+        content: Text(
+          'Start a fresh conversation? Your current chat history will be cleared.',
+          style: GoogleFonts.inter(
+              fontSize: 14, color: th.textSecondary, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Cancel',
+                style: GoogleFonts.inter(color: th.textSecondary)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              state.clearChat();
+              Navigator.pop(ctx);
+              // Switch to chat tab
+              _tabController.animateTo(0);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(children: [
+                    const Icon(Icons.auto_awesome_rounded,
+                        color: Colors.white, size: 18),
+                    const SizedBox(width: 8),
+                    Text('New chat started',
+                        style: GoogleFonts.inter()),
+                  ]),
+                  backgroundColor: AppColors.primary,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+            child: Text('New Chat',
+                style:
+                    GoogleFonts.inter(fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopBar(AppState state, ThemeHelper th) {
     return Container(
       color: th.topBarBg,
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
@@ -113,15 +191,18 @@ class _AIScreenState extends State<AIScreen>
                     color: Colors.white, size: 18),
               ),
               const SizedBox(width: 8),
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: th.chipBg,
-                  borderRadius: BorderRadius.circular(10),
+              GestureDetector(
+                onTap: () => _showNewChatDialog(context, state, th),
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: th.chipBg,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(Icons.add_rounded,
+                      size: 20, color: th.iconPrimary),
                 ),
-                child: Icon(Icons.add_rounded,
-                    size: 20, color: th.iconPrimary),
               ),
             ],
           ),
