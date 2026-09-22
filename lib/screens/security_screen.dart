@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_colors.dart';
+import '../theme/theme_helper.dart';
 
 class SecurityScreen extends StatefulWidget {
   const SecurityScreen({super.key});
@@ -54,17 +55,18 @@ class _SecurityScreenState extends State<SecurityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.bgLight,
+      backgroundColor: th.screenBg,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(child: _buildTopBar()),
-            SliverToBoxAdapter(child: _buildCameraViewer()),
-            SliverToBoxAdapter(child: _buildCameraList()),
-            SliverToBoxAdapter(child: _buildAccessControl()),
-            SliverToBoxAdapter(child: _buildSmartLock()),
-            SliverToBoxAdapter(child: _buildEventLog()),
+            SliverToBoxAdapter(child: _buildTopBar(th)),
+            SliverToBoxAdapter(child: _buildCameraViewer(th)),
+            SliverToBoxAdapter(child: _buildCameraList(th)),
+            SliverToBoxAdapter(child: _buildAccessControl(th)),
+            SliverToBoxAdapter(child: _buildSmartLock(th)),
+            SliverToBoxAdapter(child: _buildEventLog(th)),
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
           ],
         ),
@@ -72,9 +74,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
     );
   }
 
-  Widget _buildTopBar() {
+  Widget _buildTopBar(ThemeHelper th) {
     return Container(
-      color: Colors.white,
+      color: th.topBarBg,
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -84,189 +86,160 @@ class _SecurityScreenState extends State<SecurityScreen> {
             style: GoogleFonts.inter(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+              color: th.textPrimary,
             ),
           ),
-          Row(
-            children: [
-              // Arm/disarm button
-              GestureDetector(
-                onTap: () => setState(() => _alarmArmed = !_alarmArmed),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: _alarmArmed
-                        ? AppColors.error.withValues(alpha: 0.1)
-                        : AppColors.active.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: _alarmArmed
-                          ? AppColors.error.withValues(alpha: 0.3)
-                          : AppColors.active.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        _alarmArmed
-                            ? Icons.security_rounded
-                            : Icons.shield_outlined,
-                        size: 16,
-                        color:
-                            _alarmArmed ? AppColors.error : AppColors.active,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        _alarmArmed ? 'Armed' : 'Disarmed',
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: _alarmArmed
-                              ? AppColors.error
-                              : AppColors.active,
-                        ),
-                      ),
-                    ],
-                  ),
+          GestureDetector(
+            onTap: () => setState(() => _alarmArmed = !_alarmArmed),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: _alarmArmed
+                    ? AppColors.error.withValues(alpha: 0.1)
+                    : AppColors.active.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: _alarmArmed
+                      ? AppColors.error.withValues(alpha: 0.3)
+                      : AppColors.active.withValues(alpha: 0.3),
                 ),
               ),
-            ],
+              child: Row(
+                children: [
+                  Icon(
+                    _alarmArmed ? Icons.security_rounded : Icons.shield_outlined,
+                    size: 16,
+                    color: _alarmArmed ? AppColors.error : AppColors.active,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    _alarmArmed ? 'Armed' : 'Disarmed',
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: _alarmArmed ? AppColors.error : AppColors.active,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCameraViewer() {
+  Widget _buildCameraViewer(ThemeHelper th) {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Main camera view
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              color: const Color(0xFF0F172A),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.3),
-                width: 1.5,
-              ),
-            ),
-            child: Stack(
-              children: [
-                // Simulated camera feed background
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(19),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [Color(0xFF0F172A), Color(0xFF1E3A5F)],
-                      ),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.videocam_rounded,
-                              size: 48,
-                              color: Colors.white.withValues(alpha: 0.3)),
-                          const SizedBox(height: 8),
-                          Text(
-                            _cameras[_selectedCamera]['name'],
-                            style: GoogleFonts.inter(
-                              fontSize: 16,
-                              color: Colors.white.withValues(alpha: 0.5),
-                            ),
-                          ),
-                          Text(
-                            'Live Feed',
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              color: Colors.white.withValues(alpha: 0.3),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+      child: Container(
+        height: 200,
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F172A),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            width: 1.5,
+          ),
+        ),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(19),
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF0F172A), Color(0xFF1E3A5F)],
                   ),
                 ),
-                // Live badge
-                Positioned(
-                  top: 12,
-                  left: 12,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.error,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'LIVE',
-                          style: GoogleFonts.inter(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Camera controls
-                Positioned(
-                  bottom: 12,
-                  right: 12,
-                  child: Row(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _CameraControlBtn(
-                          icon: Icons.mic_rounded, onTap: () {}),
-                      const SizedBox(width: 8),
-                      _CameraControlBtn(
-                          icon: Icons.screenshot_rounded, onTap: () {}),
-                      const SizedBox(width: 8),
-                      _CameraControlBtn(
-                          icon: Icons.fullscreen_rounded, onTap: () {}),
+                      Icon(Icons.videocam_rounded,
+                          size: 48,
+                          color: Colors.white.withValues(alpha: 0.3)),
+                      const SizedBox(height: 8),
+                      Text(
+                        _cameras[_selectedCamera]['name'],
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          color: Colors.white.withValues(alpha: 0.5),
+                        ),
+                      ),
+                      Text(
+                        'Live Feed',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: Colors.white.withValues(alpha: 0.3),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                // Camera name overlay
-                Positioned(
-                  bottom: 12,
-                  left: 12,
-                  child: Text(
-                    _cameras[_selectedCamera]['room'] ?? '',
-                    style: GoogleFonts.inter(
-                        fontSize: 12, color: Colors.white70),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+            // Live badge
+            Positioned(
+              top: 12,
+              left: 12,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.error,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: const BoxDecoration(
+                          color: Colors.white, shape: BoxShape.circle),
+                    ),
+                    const SizedBox(width: 4),
+                    Text('LIVE',
+                        style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white)),
+                  ],
+                ),
+              ),
+            ),
+            // Controls
+            Positioned(
+              bottom: 12,
+              right: 12,
+              child: Row(
+                children: [
+                  _CameraControlBtn(icon: Icons.mic_rounded, onTap: () {}),
+                  const SizedBox(width: 8),
+                  _CameraControlBtn(icon: Icons.screenshot_rounded, onTap: () {}),
+                  const SizedBox(width: 8),
+                  _CameraControlBtn(icon: Icons.fullscreen_rounded, onTap: () {}),
+                ],
+              ),
+            ),
+            Positioned(
+              bottom: 12,
+              left: 12,
+              child: Text(
+                _cameras[_selectedCamera]['room'] ?? '',
+                style: GoogleFonts.inter(fontSize: 12, color: Colors.white70),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCameraList() {
+  Widget _buildCameraList(ThemeHelper th) {
     return SizedBox(
       height: 90,
       child: ListView.builder(
@@ -287,12 +260,10 @@ class _SecurityScreenState extends State<SecurityScreen> {
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.primary.withValues(alpha: 0.08)
-                    : Colors.white,
+                    : th.cameraCardBg,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isSelected
-                      ? AppColors.primary
-                      : Colors.transparent,
+                  color: isSelected ? AppColors.primary : Colors.transparent,
                   width: 1.5,
                 ),
               ),
@@ -307,10 +278,10 @@ class _SecurityScreenState extends State<SecurityScreen> {
                         Icons.videocam_rounded,
                         size: 14,
                         color: isOffline
-                            ? AppColors.textHint
+                            ? th.textHint
                             : isSelected
                                 ? AppColors.primary
-                                : AppColors.textSecondary,
+                                : th.iconSecondary,
                       ),
                       const SizedBox(width: 4),
                       Expanded(
@@ -319,9 +290,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                           style: GoogleFonts.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: isOffline
-                                ? AppColors.textHint
-                                : AppColors.textPrimary,
+                            color: isOffline ? th.textHint : th.textPrimary,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -335,9 +304,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                         width: 6,
                         height: 6,
                         decoration: BoxDecoration(
-                          color: isOffline
-                              ? AppColors.textHint
-                              : AppColors.active,
+                          color: isOffline ? th.textHint : AppColors.active,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -346,9 +313,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                         cam['status'],
                         style: GoogleFonts.inter(
                           fontSize: 10,
-                          color: isOffline
-                              ? AppColors.textHint
-                              : AppColors.active,
+                          color: isOffline ? th.textHint : AppColors.active,
                         ),
                       ),
                     ],
@@ -362,7 +327,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
     );
   }
 
-  Widget _buildAccessControl() {
+  Widget _buildAccessControl(ThemeHelper th) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Column(
@@ -371,7 +336,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
           Text(
             'Video Intercom & Access',
             style: GoogleFonts.inter(
-                fontSize: 16, fontWeight: FontWeight.w700),
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: th.textPrimary),
           ),
           const SizedBox(height: 12),
           Row(
@@ -382,6 +349,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                   label: 'Video Call',
                   subLabel: 'Front door',
                   color: AppColors.accentBlue,
+                  th: th,
                   onTap: () {},
                 ),
               ),
@@ -392,6 +360,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                   label: 'Face Unlock',
                   subLabel: '3 faces stored',
                   color: AppColors.accentPurple,
+                  th: th,
                   onTap: () {},
                 ),
               ),
@@ -402,6 +371,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                   label: 'Fingerprint',
                   subLabel: '5 prints',
                   color: AppColors.accentGreen,
+                  th: th,
                   onTap: () {},
                 ),
               ),
@@ -412,15 +382,16 @@ class _SecurityScreenState extends State<SecurityScreen> {
     );
   }
 
-  Widget _buildSmartLock() {
+  Widget _buildSmartLock(ThemeHelper th) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: th.cardBg,
           borderRadius: BorderRadius.circular(18),
-          boxShadow: AppColors.cardShadow,
+          boxShadow: th.cardShadow,
+          border: Border.all(color: th.borderColor),
         ),
         child: Row(
           children: [
@@ -436,9 +407,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
               ),
               child: Icon(
                 _doorLocked ? Icons.lock_rounded : Icons.lock_open_rounded,
-                color: _doorLocked
-                    ? AppColors.accentBlue
-                    : AppColors.accentGreen,
+                color: _doorLocked ? AppColors.accentBlue : AppColors.accentGreen,
                 size: 28,
               ),
             ),
@@ -447,11 +416,11 @@ class _SecurityScreenState extends State<SecurityScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Smart Door Lock',
-                    style: GoogleFonts.inter(
-                        fontSize: 15, fontWeight: FontWeight.w700),
-                  ),
+                  Text('Smart Door Lock',
+                      style: GoogleFonts.inter(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: th.textPrimary)),
                   Text(
                     _doorLocked ? 'Locked · Secure' : 'Unlocked',
                     style: GoogleFonts.inter(
@@ -462,11 +431,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    'IP65 · Face + Fingerprint + PIN',
-                    style: GoogleFonts.inter(
-                        fontSize: 11, color: AppColors.textHint),
-                  ),
+                  Text('IP65 · Face + Fingerprint + PIN',
+                      style: GoogleFonts.inter(
+                          fontSize: 11, color: th.textHint)),
                 ],
               ),
             ),
@@ -492,9 +459,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                     height: 22,
                     margin: const EdgeInsets.symmetric(horizontal: 3),
                     decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
+                        color: Colors.white, shape: BoxShape.circle),
                   ),
                 ),
               ),
@@ -505,7 +470,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
     );
   }
 
-  Widget _buildEventLog() {
+  Widget _buildEventLog(ThemeHelper th) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
       child: Column(
@@ -514,11 +479,11 @@ class _SecurityScreenState extends State<SecurityScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Recent Events',
-                style: GoogleFonts.inter(
-                    fontSize: 16, fontWeight: FontWeight.w700),
-              ),
+              Text('Recent Events',
+                  style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: th.textPrimary)),
               TextButton(
                 onPressed: () {},
                 child: Text('View all',
@@ -533,9 +498,10 @@ class _SecurityScreenState extends State<SecurityScreen> {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: th.cardBg,
                 borderRadius: BorderRadius.circular(14),
-                boxShadow: AppColors.cardShadow,
+                boxShadow: th.cardShadow,
+                border: Border.all(color: th.borderColor),
               ),
               child: Row(
                 children: [
@@ -554,24 +520,20 @@ class _SecurityScreenState extends State<SecurityScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          e['type'],
-                          style: GoogleFonts.inter(
-                              fontSize: 13, fontWeight: FontWeight.w600),
-                        ),
-                        Text(
-                          e['location'],
-                          style: GoogleFonts.inter(
-                              fontSize: 11, color: AppColors.textSecondary),
-                        ),
+                        Text(e['type'],
+                            style: GoogleFonts.inter(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: th.textPrimary)),
+                        Text(e['location'],
+                            style: GoogleFonts.inter(
+                                fontSize: 11, color: th.textSecondary)),
                       ],
                     ),
                   ),
-                  Text(
-                    e['time'],
-                    style: GoogleFonts.inter(
-                        fontSize: 11, color: AppColors.textHint),
-                  ),
+                  Text(e['time'],
+                      style:
+                          GoogleFonts.inter(fontSize: 11, color: th.textHint)),
                 ],
               ),
             ),
@@ -581,6 +543,8 @@ class _SecurityScreenState extends State<SecurityScreen> {
     );
   }
 }
+
+// ─── Sub-widgets ──────────────────────────────────────────────────────────────
 
 class _CameraControlBtn extends StatelessWidget {
   final IconData icon;
@@ -610,6 +574,7 @@ class _ActionCard extends StatelessWidget {
   final String label;
   final String subLabel;
   final Color color;
+  final ThemeHelper th;
   final VoidCallback onTap;
 
   const _ActionCard({
@@ -617,6 +582,7 @@ class _ActionCard extends StatelessWidget {
     required this.label,
     required this.subLabel,
     required this.color,
+    required this.th,
     required this.onTap,
   });
 
@@ -627,9 +593,10 @@ class _ActionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: th.cardBg,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: AppColors.cardShadow,
+          boxShadow: th.cardShadow,
+          border: Border.all(color: th.borderColor),
         ),
         child: Column(
           children: [
@@ -643,18 +610,15 @@ class _ActionCard extends StatelessWidget {
               child: Icon(icon, color: color, size: 20),
             ),
             const SizedBox(height: 8),
-            Text(
-              label,
-              style: GoogleFonts.inter(
-                  fontSize: 12, fontWeight: FontWeight.w600),
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              subLabel,
-              style: GoogleFonts.inter(
-                  fontSize: 10, color: AppColors.textHint),
-              textAlign: TextAlign.center,
-            ),
+            Text(label,
+                style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: th.textPrimary),
+                textAlign: TextAlign.center),
+            Text(subLabel,
+                style: GoogleFonts.inter(fontSize: 10, color: th.textHint),
+                textAlign: TextAlign.center),
           ],
         ),
       ),

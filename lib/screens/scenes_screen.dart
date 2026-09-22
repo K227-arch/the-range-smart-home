@@ -112,18 +112,21 @@ class _ScenesScreenState extends State<ScenesScreen>
     );
   }
 
-  Widget _iconBtn(IconData icon, VoidCallback onTap) => GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: const Color(0xFFF1F5F9),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(icon, size: 20, color: AppColors.textPrimary),
+  Widget _iconBtn(IconData icon, VoidCallback onTap) {
+    final th = ThemeHelper.of(context);
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: th.chipBg,
+          borderRadius: BorderRadius.circular(10),
         ),
-      );
+        child: Icon(icon, size: 20, color: th.iconPrimary),
+      ),
+    );
+  }
 }
 
 class _TapToRunTab extends StatelessWidget {
@@ -305,6 +308,7 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Text(
@@ -312,7 +316,7 @@ class _SectionLabel extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 16,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
+          color: th.textPrimary,
         ),
       ),
     );
@@ -326,17 +330,17 @@ class _AddSceneButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return GestureDetector(
       onTap: () {},
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: th.cardBg,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: AppColors.primary.withValues(alpha: 0.3),
-            style: BorderStyle.solid,
             width: 1.5,
           ),
         ),

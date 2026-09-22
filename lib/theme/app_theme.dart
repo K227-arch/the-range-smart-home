@@ -155,9 +155,36 @@ class AppTheme {
         onSurface: AppColors.textOnDark,
       ),
       scaffoldBackgroundColor: AppColors.bgDark,
-      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).copyWith(
+        displayLarge: GoogleFonts.inter(
+          fontSize: 32, fontWeight: FontWeight.w700, color: AppColors.textOnDark),
+        displayMedium: GoogleFonts.inter(
+          fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.textOnDark),
+        headlineLarge: GoogleFonts.inter(
+          fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.textOnDark),
+        headlineMedium: GoogleFonts.inter(
+          fontSize: 20, fontWeight: FontWeight.w600, color: AppColors.textOnDark),
+        headlineSmall: GoogleFonts.inter(
+          fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.textOnDark),
+        titleLarge: GoogleFonts.inter(
+          fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textOnDark),
+        titleMedium: GoogleFonts.inter(
+          fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.textOnDark),
+        titleSmall: GoogleFonts.inter(
+          fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.textOnDarkSecondary),
+        bodyLarge: GoogleFonts.inter(
+          fontSize: 15, fontWeight: FontWeight.w400, color: AppColors.textOnDark),
+        bodyMedium: GoogleFonts.inter(
+          fontSize: 14, fontWeight: FontWeight.w400, color: AppColors.textOnDark),
+        bodySmall: GoogleFonts.inter(
+          fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.textOnDarkSecondary),
+        labelLarge: GoogleFonts.inter(
+          fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textOnDark),
+        labelSmall: GoogleFonts.inter(
+          fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.textOnDarkSecondary),
+      ),
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.bgDark,
+        backgroundColor: AppColors.bgCard,
         foregroundColor: AppColors.textOnDark,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
@@ -173,6 +200,38 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
+      ),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: AppColors.bgCard,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textOnDarkSecondary,
+        type: BottomNavigationBarType.fixed,
+        elevation: 0,
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((_) => Colors.white),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return AppColors.primary;
+          return AppColors.bgCardLight;
+        }),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.bgCardLight,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        hintStyle: GoogleFonts.inter(
+          fontSize: 14,
+          color: const Color(0xFF64748B),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+      dividerColor: Colors.white.withValues(alpha: 0.06),
+      dividerTheme: DividerThemeData(
+        color: Colors.white.withValues(alpha: 0.06),
+        thickness: 1,
       ),
     );
   }

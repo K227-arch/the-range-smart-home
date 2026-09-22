@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/device.dart';
 import '../theme/app_colors.dart';
+import '../theme/theme_helper.dart';
 
 class DeviceCard extends StatelessWidget {
   final Device device;
@@ -17,7 +18,29 @@ class DeviceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     final isOn = device.isOn;
+
+    // Dark: card bg is bgCard (on) / bgCardLight (off)
+    // Light: white (on) / F8FAFC (off)
+    final cardColor = isOn
+        ? (th.isDark ? AppColors.bgCard : Colors.white)
+        : (th.isDark ? AppColors.bgCardLight : const Color(0xFFF8FAFC));
+
+    final borderColor = isOn
+        ? AppColors.primary.withValues(alpha: 0.15)
+        : th.borderColor;
+
+    final shadow = isOn
+        ? [
+            BoxShadow(
+              color: AppColors.primary.withValues(
+                  alpha: th.isDark ? 0.12 : 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ]
+        : th.cardShadow;
 
     return GestureDetector(
       onTap: onTap,
@@ -25,29 +48,10 @@ class DeviceCard extends StatelessWidget {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: isOn ? Colors.white : const Color(0xFFF8FAFC),
+          color: cardColor,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: isOn
-                ? AppColors.primary.withValues(alpha: 0.15)
-                : const Color(0xFFE2E8F0),
-            width: 1.2,
-          ),
-          boxShadow: isOn
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.08),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+          border: Border.all(color: borderColor, width: 1.2),
+          boxShadow: shadow,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,12 +67,12 @@ class DeviceCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isOn
                         ? device.iconColor.withValues(alpha: 0.12)
-                        : const Color(0xFFEEF2FF).withValues(alpha: 0.5),
+                        : th.chipBg,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     device.icon,
-                    color: isOn ? device.iconColor : AppColors.textHint,
+                    color: isOn ? device.iconColor : th.textHint,
                     size: 20,
                   ),
                 ),
@@ -84,35 +88,31 @@ class DeviceCard extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: isOn ? AppColors.textPrimary : AppColors.textSecondary,
+                color: isOn ? th.textPrimary : th.textSecondary,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
 
-            // Room + status
+            // Room + protocol badge
             Row(
               children: [
                 Expanded(
                   child: Text(
                     device.room,
                     style: GoogleFonts.inter(
-                      fontSize: 11,
-                      color: AppColors.textHint,
-                    ),
+                        fontSize: 11, color: th.textHint),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                // Protocol badge
                 _ProtocolBadge(protocol: device.protocol),
               ],
             ),
 
-            // Extra attribute row if device is on
             if (isOn && device.attributes.isNotEmpty) ...[
               const SizedBox(height: 4),
-              _buildAttribute(),
+              _buildAttribute(th),
             ],
           ],
         ),
@@ -120,33 +120,29 @@ class DeviceCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAttribute() {
+  Widget _buildAttribute(ThemeHelper th) {
     final attrs = device.attributes;
     if (device.type == DeviceType.thermostat) {
       return Text(
         '${attrs['temp']}°C · ${attrs['mode']}',
         style: GoogleFonts.inter(
-          fontSize: 11,
-          color: AppColors.primary,
-          fontWeight: FontWeight.w500,
-        ),
+            fontSize: 11,
+            color: AppColors.primary,
+            fontWeight: FontWeight.w500),
       );
     } else if (device.type == DeviceType.airConditioner) {
       return Text(
         'Temp: ${attrs['temp']}°  Wind: ${attrs['wind']}',
-        style: GoogleFonts.inter(
-          fontSize: 10,
-          color: AppColors.textHint,
-        ),
+        style: GoogleFonts.inter(fontSize: 10, color: th.textHint),
       );
     } else if (device.type == DeviceType.light) {
       return Row(
         children: [
-          Icon(Icons.brightness_6_rounded, size: 11, color: AppColors.textHint),
+          Icon(Icons.brightness_6_rounded, size: 11, color: th.textHint),
           const SizedBox(width: 3),
           Text(
             '${attrs['brightness']}%',
-            style: GoogleFonts.inter(fontSize: 11, color: AppColors.textHint),
+            style: GoogleFonts.inter(fontSize: 11, color: th.textHint),
           ),
         ],
       );
@@ -154,10 +150,9 @@ class DeviceCard extends StatelessWidget {
       return Text(
         '${attrs['power']} W',
         style: GoogleFonts.inter(
-          fontSize: 11,
-          color: AppColors.accentGreen,
-          fontWeight: FontWeight.w600,
-        ),
+            fontSize: 11,
+            color: AppColors.accentGreen,
+            fontWeight: FontWeight.w600),
       );
     }
     return const SizedBox.shrink();
@@ -190,9 +185,7 @@ class _SmallToggle extends StatelessWidget {
             height: 16,
             margin: const EdgeInsets.symmetric(horizontal: 2),
             decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
+                color: Colors.white, shape: BoxShape.circle),
           ),
         ),
       ),
@@ -232,10 +225,7 @@ class _ProtocolBadge extends StatelessWidget {
       child: Text(
         label,
         style: GoogleFonts.inter(
-          fontSize: 9,
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
+            fontSize: 9, color: color, fontWeight: FontWeight.w600),
       ),
     );
   }

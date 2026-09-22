@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/scene.dart';
 import '../theme/app_colors.dart';
+import '../theme/theme_helper.dart';
 
 class SceneCard extends StatelessWidget {
   final Scene scene;
@@ -11,15 +12,20 @@ class SceneCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: scene.color.withValues(alpha: 0.08),
+          // In dark mode keep the colour tint but tone it down slightly
+          color: th.isDark
+              ? scene.color.withValues(alpha: 0.12)
+              : scene.color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: scene.color.withValues(alpha: 0.2),
+            color: scene.color.withValues(alpha: th.isDark ? 0.25 : 0.2),
             width: 1,
           ),
         ),
@@ -42,7 +48,7 @@ class SceneCard extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: th.textPrimary,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -51,9 +57,7 @@ class SceneCard extends StatelessWidget {
               Text(
                 scene.description!,
                 style: GoogleFonts.inter(
-                  fontSize: 11,
-                  color: AppColors.textSecondary,
-                ),
+                    fontSize: 11, color: th.textSecondary),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -68,17 +72,21 @@ class AutomationRow extends StatelessWidget {
   final Scene scene;
   final VoidCallback onToggle;
 
-  const AutomationRow({super.key, required this.scene, required this.onToggle});
+  const AutomationRow(
+      {super.key, required this.scene, required this.onToggle});
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBg,
         borderRadius: BorderRadius.circular(14),
-        boxShadow: AppColors.cardShadow,
+        boxShadow: th.cardShadow,
+        border: Border.all(color: th.borderColor),
       ),
       child: Row(
         children: [
@@ -101,21 +109,18 @@ class AutomationRow extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
                 if (scene.description != null)
                   Text(
                     scene.description!,
                     style: GoogleFonts.inter(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                    ),
+                        fontSize: 12, color: th.textSecondary),
                   ),
               ],
             ),
           ),
-          // Enable/disable toggle
           GestureDetector(
             onTap: onToggle,
             child: AnimatedContainer(
@@ -125,7 +130,9 @@ class AutomationRow extends StatelessWidget {
               decoration: BoxDecoration(
                 color: scene.isEnabled
                     ? AppColors.primary
-                    : const Color(0xFFCBD5E1),
+                    : (th.isDark
+                        ? AppColors.bgCardLight
+                        : const Color(0xFFCBD5E1)),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: AnimatedAlign(
@@ -138,9 +145,7 @@ class AutomationRow extends StatelessWidget {
                   height: 20,
                   margin: const EdgeInsets.symmetric(horizontal: 2),
                   decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
+                      color: Colors.white, shape: BoxShape.circle),
                 ),
               ),
             ),

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../models/app_state.dart';
 import '../theme/app_colors.dart';
+import '../theme/theme_helper.dart';
 
 class EnergyScreen extends StatelessWidget {
   const EnergyScreen({super.key});
@@ -11,18 +12,19 @@ class EnergyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
+    final th = ThemeHelper.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.bgLight,
+      backgroundColor: th.screenBg,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(child: _buildTopBar(context, state)),
+            SliverToBoxAdapter(child: _buildTopBar(th)),
             SliverToBoxAdapter(child: _buildHeroCard(state)),
-            SliverToBoxAdapter(child: _buildChart(state)),
-            SliverToBoxAdapter(child: _buildAIFeaturesBanner()),
-            SliverToBoxAdapter(child: _buildConsumptionDetails()),
-            SliverToBoxAdapter(child: _buildDeviceBreakdown()),
+            SliverToBoxAdapter(child: _buildChart(state, th)),
+            SliverToBoxAdapter(child: _buildAIFeaturesBanner(th)),
+            SliverToBoxAdapter(child: _buildConsumptionDetails(th)),
+            SliverToBoxAdapter(child: _buildDeviceBreakdown(th)),
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
           ],
         ),
@@ -30,9 +32,9 @@ class EnergyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTopBar(BuildContext context, AppState state) {
+  Widget _buildTopBar(ThemeHelper th) {
     return Container(
-      color: Colors.white,
+      color: th.topBarBg,
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -42,14 +44,14 @@ class EnergyScreen extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+              color: th.textPrimary,
             ),
           ),
           Row(
             children: [
-              _iconBtn(Icons.more_horiz_rounded),
+              _iconBtn(Icons.more_horiz_rounded, th),
               const SizedBox(width: 8),
-              _iconBtn(Icons.close_rounded),
+              _iconBtn(Icons.close_rounded, th),
             ],
           ),
         ],
@@ -57,17 +59,18 @@ class EnergyScreen extends StatelessWidget {
     );
   }
 
-  Widget _iconBtn(IconData icon) => Container(
+  Widget _iconBtn(IconData icon, ThemeHelper th) => Container(
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: const Color(0xFFF1F5F9),
+          color: th.chipBg,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, size: 18, color: AppColors.textSecondary),
+        child: Icon(icon, size: 18, color: th.iconSecondary),
       );
 
   Widget _buildHeroCard(AppState state) {
+    // Hero card stays gradient — always looks fine in both modes
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Container(
@@ -119,7 +122,6 @@ class EnergyScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                // Savings badge
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -128,48 +130,36 @@ class EnergyScreen extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      Text(
-                        'Saved',
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          color: Colors.white.withValues(alpha: 0.7),
-                        ),
-                      ),
-                      Text(
-                        '8.00',
-                        style: GoogleFonts.inter(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        'kWh',
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          color: Colors.white.withValues(alpha: 0.7),
-                        ),
-                      ),
+                      Text('Saved',
+                          style: GoogleFonts.inter(
+                              fontSize: 11,
+                              color: Colors.white.withValues(alpha: 0.7))),
+                      Text('8.00',
+                          style: GoogleFonts.inter(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white)),
+                      Text('kWh',
+                          style: GoogleFonts.inter(
+                              fontSize: 11,
+                              color: Colors.white.withValues(alpha: 0.7))),
                     ],
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            // Week/Month toggle
             Row(
               children: [
                 _PeriodBtn(
-                  label: 'Week',
-                  isSelected: state.energyWeekView,
-                  onTap: () => state.toggleEnergyView(true),
-                ),
+                    label: 'Week',
+                    isSelected: state.energyWeekView,
+                    onTap: () => state.toggleEnergyView(true)),
                 const SizedBox(width: 8),
                 _PeriodBtn(
-                  label: 'Month',
-                  isSelected: !state.energyWeekView,
-                  onTap: () => state.toggleEnergyView(false),
-                ),
+                    label: 'Month',
+                    isSelected: !state.energyWeekView,
+                    onTap: () => state.toggleEnergyView(false)),
               ],
             ),
           ],
@@ -178,7 +168,7 @@ class EnergyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChart(AppState state) {
+  Widget _buildChart(AppState state, ThemeHelper th) {
     final data = state.energyData;
     final labels = state.energyWeekView
         ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -189,9 +179,10 @@ class EnergyScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: th.cardBg,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: AppColors.cardShadow,
+          boxShadow: th.cardShadow,
+          border: Border.all(color: th.borderColor),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,18 +190,19 @@ class EnergyScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Consumption Chart',
-                  style: GoogleFonts.inter(
-                      fontSize: 15, fontWeight: FontWeight.w600),
-                ),
+                Text('Consumption Chart',
+                    style: GoogleFonts.inter(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: th.textPrimary)),
                 Row(
                   children: [
-                    _LegendDot(color: AppColors.primary, label: 'kWh'),
+                    _LegendDot(color: AppColors.primary, label: 'kWh', th: th),
                     const SizedBox(width: 12),
                     _LegendDot(
                         color: AppColors.active.withValues(alpha: 0.4),
-                        label: 'Saved'),
+                        label: 'Saved',
+                        th: th),
                   ],
                 ),
               ],
@@ -224,7 +216,9 @@ class EnergyScreen extends StatelessWidget {
                   maxY: (data.reduce((a, b) => a > b ? a : b) * 1.3),
                   barTouchData: BarTouchData(
                     touchTooltipData: BarTouchTooltipData(
-                      tooltipBgColor: AppColors.bgCard,
+                      tooltipBgColor: th.isDark
+                          ? AppColors.bgCardLight
+                          : AppColors.bgCard,
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
                         return BarTooltipItem(
                           '${rod.toY.toStringAsFixed(1)} kWh',
@@ -244,18 +238,12 @@ class EnergyScreen extends StatelessWidget {
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
                           final idx = value.toInt();
-                          if (idx >= labels.length) {
-                            return const SizedBox.shrink();
-                          }
+                          if (idx >= labels.length) return const SizedBox.shrink();
                           return Padding(
                             padding: const EdgeInsets.only(top: 4),
-                            child: Text(
-                              labels[idx],
-                              style: GoogleFonts.inter(
-                                fontSize: 11,
-                                color: AppColors.textHint,
-                              ),
-                            ),
+                            child: Text(labels[idx],
+                                style: GoogleFonts.inter(
+                                    fontSize: 11, color: th.textHint)),
                           );
                         },
                       ),
@@ -267,7 +255,7 @@ class EnergyScreen extends StatelessWidget {
                         getTitlesWidget: (value, meta) => Text(
                           value.toStringAsFixed(0),
                           style: GoogleFonts.inter(
-                              fontSize: 10, color: AppColors.textHint),
+                              fontSize: 10, color: th.textHint),
                         ),
                       ),
                     ),
@@ -279,8 +267,8 @@ class EnergyScreen extends StatelessWidget {
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: false,
-                    getDrawingHorizontalLine: (value) => FlLine(
-                      color: const Color(0xFFE2E8F0),
+                    getDrawingHorizontalLine: (_) => FlLine(
+                      color: th.divider,
                       strokeWidth: 1,
                     ),
                   ),
@@ -294,10 +282,7 @@ class EnergyScreen extends StatelessWidget {
                           gradient: const LinearGradient(
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
-                            colors: [
-                              AppColors.primary,
-                              Color(0xFF60A5FA),
-                            ],
+                            colors: [AppColors.primary, Color(0xFF60A5FA)],
                           ),
                           width: 16,
                           borderRadius: const BorderRadius.vertical(
@@ -315,16 +300,15 @@ class EnergyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAIFeaturesBanner() {
+  Widget _buildAIFeaturesBanner(ThemeHelper th) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFFEFF6FF),
+          color: th.bannerBg,
           borderRadius: BorderRadius.circular(18),
-          border:
-              Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+          border: Border.all(color: th.bannerBorder),
         ),
         child: Row(
           children: [
@@ -343,33 +327,28 @@ class EnergyScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Discover more advanced features',
-                    style: GoogleFonts.inter(
-                        fontSize: 13, fontWeight: FontWeight.w600),
-                  ),
-                  Text(
-                    'AI recommendations to reduce consumption',
-                    style: GoogleFonts.inter(
-                        fontSize: 11, color: AppColors.textSecondary),
-                  ),
+                  Text('Discover more advanced features',
+                      style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: th.textPrimary)),
+                  Text('AI recommendations to reduce consumption',
+                      style: GoogleFonts.inter(
+                          fontSize: 11, color: th.textSecondary)),
                 ],
               ),
             ),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: AppColors.primary,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(
-                'Learn more',
-                style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white),
-              ),
+              child: Text('Learn more',
+                  style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white)),
             ),
           ],
         ),
@@ -377,35 +356,34 @@ class EnergyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildConsumptionDetails() {
+  Widget _buildConsumptionDetails(ThemeHelper th) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Energy consumption details',
-            style: GoogleFonts.inter(
-                fontSize: 16, fontWeight: FontWeight.w700),
-          ),
+          Text('Energy consumption details',
+              style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: th.textPrimary)),
           const SizedBox(height: 12),
-          // Week/Month tabs
           Row(
             children: [
-              _DetailTabChip(label: 'Week', isSelected: true),
+              _DetailTabChip(label: 'Week', isSelected: true, th: th),
               const SizedBox(width: 8),
-              _DetailTabChip(label: 'Month', isSelected: false),
+              _DetailTabChip(label: 'Month', isSelected: false, th: th),
             ],
           ),
           const SizedBox(height: 16),
-          // Mini line chart placeholder
           Container(
             height: 80,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: th.cardBg,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: AppColors.cardShadow,
+              boxShadow: th.cardShadow,
+              border: Border.all(color: th.borderColor),
             ),
             child: Row(
               children: [
@@ -413,19 +391,14 @@ class EnergyScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '30 kW',
-                        style: GoogleFonts.inter(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      Text(
-                        'Peak usage',
-                        style: GoogleFonts.inter(
-                            fontSize: 11, color: AppColors.textHint),
-                      ),
+                      Text('30 kW',
+                          style: GoogleFonts.inter(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primary)),
+                      Text('Peak usage',
+                          style: GoogleFonts.inter(
+                              fontSize: 11, color: th.textHint)),
                     ],
                   ),
                 ),
@@ -433,19 +406,14 @@ class EnergyScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '20 kW',
-                        style: GoogleFonts.inter(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.accentGreen,
-                        ),
-                      ),
-                      Text(
-                        'Off-peak',
-                        style: GoogleFonts.inter(
-                            fontSize: 11, color: AppColors.textHint),
-                      ),
+                      Text('20 kW',
+                          style: GoogleFonts.inter(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.accentGreen)),
+                      Text('Off-peak',
+                          style: GoogleFonts.inter(
+                              fontSize: 11, color: th.textHint)),
                     ],
                   ),
                 ),
@@ -457,12 +425,12 @@ class EnergyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDeviceBreakdown() {
+  Widget _buildDeviceBreakdown(ThemeHelper th) {
     final deviceUsage = [
       {'name': 'Air Conditioner', 'kwh': 28.4, 'pct': 0.52, 'color': AppColors.accentBlue},
-      {'name': 'Lighting', 'kwh': 12.1, 'pct': 0.22, 'color': AppColors.accentYellow},
-      {'name': 'Sockets', 'kwh': 8.7, 'pct': 0.16, 'color': AppColors.accentOrange},
-      {'name': 'Other', 'kwh': 5.2, 'pct': 0.10, 'color': AppColors.textHint},
+      {'name': 'Lighting',        'kwh': 12.1, 'pct': 0.22, 'color': AppColors.accentYellow},
+      {'name': 'Sockets',         'kwh': 8.7,  'pct': 0.16, 'color': AppColors.accentOrange},
+      {'name': 'Other',           'kwh': 5.2,  'pct': 0.10, 'color': AppColors.textHint},
     ];
 
     return Padding(
@@ -470,18 +438,19 @@ class EnergyScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: th.cardBg,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: AppColors.cardShadow,
+          boxShadow: th.cardShadow,
+          border: Border.all(color: th.borderColor),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Device Breakdown',
-              style: GoogleFonts.inter(
-                  fontSize: 15, fontWeight: FontWeight.w600),
-            ),
+            Text('Device Breakdown',
+                style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: th.textPrimary)),
             const SizedBox(height: 16),
             ...deviceUsage.map((d) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -491,12 +460,11 @@ class EnergyScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            d['name'] as String,
-                            style: GoogleFonts.inter(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500),
-                          ),
+                          Text(d['name'] as String,
+                              style: GoogleFonts.inter(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: th.textPrimary)),
                           Text(
                             '${(d['kwh'] as double).toStringAsFixed(1)} kWh',
                             style: GoogleFonts.inter(
@@ -512,7 +480,7 @@ class EnergyScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                         child: LinearProgressIndicator(
                           value: d['pct'] as double,
-                          backgroundColor: const Color(0xFFE2E8F0),
+                          backgroundColor: th.progressTrack,
                           valueColor: AlwaysStoppedAnimation<Color>(
                               d['color'] as Color),
                           minHeight: 6,
@@ -528,15 +496,15 @@ class EnergyScreen extends StatelessWidget {
   }
 }
 
+// ─── Sub-widgets ──────────────────────────────────────────────────────────────
+
 class _PeriodBtn extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _PeriodBtn(
-      {required this.label,
-      required this.isSelected,
-      required this.onTap});
+      {required this.label, required this.isSelected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -546,7 +514,9 @@ class _PeriodBtn extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.2),
+          color: isSelected
+              ? Colors.white
+              : Colors.white.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -567,8 +537,10 @@ class _PeriodBtn extends StatelessWidget {
 class _LegendDot extends StatelessWidget {
   final Color color;
   final String label;
+  final ThemeHelper th;
 
-  const _LegendDot({required this.color, required this.label});
+  const _LegendDot(
+      {required this.color, required this.label, required this.th});
 
   @override
   Widget build(BuildContext context) {
@@ -577,12 +549,10 @@ class _LegendDot extends StatelessWidget {
         Container(
             width: 8,
             height: 8,
-            decoration:
-                BoxDecoration(color: color, shape: BoxShape.circle)),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
         const SizedBox(width: 4),
         Text(label,
-            style: GoogleFonts.inter(
-                fontSize: 11, color: AppColors.textHint)),
+            style: GoogleFonts.inter(fontSize: 11, color: th.textHint)),
       ],
     );
   }
@@ -591,15 +561,17 @@ class _LegendDot extends StatelessWidget {
 class _DetailTabChip extends StatelessWidget {
   final String label;
   final bool isSelected;
+  final ThemeHelper th;
 
-  const _DetailTabChip({required this.label, required this.isSelected});
+  const _DetailTabChip(
+      {required this.label, required this.isSelected, required this.th});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
-        color: isSelected ? AppColors.primary : const Color(0xFFF1F5F9),
+        color: isSelected ? AppColors.primary : th.chipBg,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -607,7 +579,7 @@ class _DetailTabChip extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 13,
           fontWeight: FontWeight.w500,
-          color: isSelected ? Colors.white : AppColors.textSecondary,
+          color: isSelected ? Colors.white : th.textSecondary,
         ),
       ),
     );
