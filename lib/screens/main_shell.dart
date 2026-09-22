@@ -34,23 +34,37 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
+    final isDark = state.isDarkMode;
 
     return Scaffold(
       body: IndexedStack(
         index: state.currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: _buildNavBar(context, state),
+      bottomNavigationBar: _buildNavBar(context, state, isDark),
     );
   }
 
-  Widget _buildNavBar(BuildContext context, AppState state) {
+  Widget _buildNavBar(BuildContext context, AppState state, bool isDark) {
+    final navBg = isDark ? AppColors.bgCard : Colors.white;
+    final selectedColor = AppColors.primary;
+    final unselectedColor =
+        isDark ? AppColors.textOnDarkSecondary : AppColors.navUnselected;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: navBg,
+        border: Border(
+          top: BorderSide(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.06)
+                : Colors.black.withValues(alpha: 0.07),
+            width: 1,
+          ),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
             blurRadius: 20,
             offset: const Offset(0, -4),
           ),
@@ -61,52 +75,107 @@ class MainShell extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: _navItems.asMap().entries.map((entry) {
-              final idx = entry.key;
-              final item = entry.value;
-              final isSelected = state.currentIndex == idx;
+            children: [
+              // ── Nav tabs ──────────────────────────────────────────────
+              ..._navItems.asMap().entries.map((entry) {
+                final idx = entry.key;
+                final item = entry.value;
+                final isSelected = state.currentIndex == idx;
 
-              return GestureDetector(
-                onTap: () => state.setIndex(idx),
+                return GestureDetector(
+                  onTap: () => state.setIndex(idx),
+                  behavior: HitTestBehavior.opaque,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? selectedColor.withValues(alpha: 0.1)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          item.icon,
+                          size: 22,
+                          color: isSelected ? selectedColor : unselectedColor,
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          item.label,
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: isSelected
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                            color:
+                                isSelected ? selectedColor : unselectedColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+
+              // ── Dark / Light mode toggle ───────────────────────────────
+              GestureDetector(
+                onTap: () => state.toggleTheme(),
                 behavior: HitTestBehavior.opaque,
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 300),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 6),
+                      horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? AppColors.primary.withValues(alpha: 0.08)
-                        : Colors.transparent,
+                    color: isDark
+                        ? AppColors.accentYellow.withValues(alpha: 0.12)
+                        : AppColors.bgDark.withValues(alpha: 0.07),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        item.icon,
-                        size: 22,
-                        color: isSelected
-                            ? AppColors.primary
-                            : AppColors.navUnselected,
+                      // Animated icon swap
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 350),
+                        transitionBuilder: (child, anim) => RotationTransition(
+                          turns: anim,
+                          child: FadeTransition(opacity: anim, child: child),
+                        ),
+                        child: Icon(
+                          isDark
+                              ? Icons.wb_sunny_rounded       // in dark → show sun (switch to light)
+                              : Icons.nightlight_round,      // in light → show moon (switch to dark)
+                          key: ValueKey(isDark),
+                          size: 22,
+                          color: isDark
+                              ? AppColors.accentYellow
+                              : AppColors.bgDark,
+                        ),
                       ),
                       const SizedBox(height: 3),
-                      Text(
-                        item.label,
-                        style: GoogleFonts.inter(
-                          fontSize: 10,
-                          fontWeight: isSelected
-                              ? FontWeight.w700
-                              : FontWeight.w400,
-                          color: isSelected
-                              ? AppColors.primary
-                              : AppColors.navUnselected,
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 250),
+                        child: Text(
+                          isDark ? 'Light' : 'Dark',
+                          key: ValueKey('label_$isDark'),
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: isDark
+                                ? AppColors.accentYellow
+                                : AppColors.bgDark,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              );
-            }).toList(),
+              ),
+            ],
           ),
         ),
       ),

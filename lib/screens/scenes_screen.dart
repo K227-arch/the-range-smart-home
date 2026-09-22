@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../models/app_state.dart';
 import '../theme/app_colors.dart';
+import '../theme/theme_helper.dart';
 import '../widgets/scene_card.dart';
 
 class ScenesScreen extends StatefulWidget {
@@ -31,15 +32,16 @@ class _ScenesScreenState extends State<ScenesScreen>
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
+    final th = ThemeHelper.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.bgLight,
+      backgroundColor: th.screenBg,
       body: SafeArea(
         child: Column(
           children: [
             // Top bar
             Container(
-              color: Colors.white,
+              color: th.topBarBg,
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +59,7 @@ class _ScenesScreenState extends State<ScenesScreen>
                             style: GoogleFonts.inter(
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
+                              color: th.textPrimary,
                             ),
                           ),
                         ],
@@ -75,8 +77,8 @@ class _ScenesScreenState extends State<ScenesScreen>
                   // Tab bar
                   TabBar(
                     controller: _tabController,
-                    labelColor: AppColors.textPrimary,
-                    unselectedLabelColor: AppColors.textSecondary,
+                    labelColor: th.textPrimary,
+                    unselectedLabelColor: th.textSecondary,
                     labelStyle: GoogleFonts.inter(
                         fontSize: 15, fontWeight: FontWeight.w700),
                     unselectedLabelStyle:

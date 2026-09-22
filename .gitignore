@@ -37,3 +37,10 @@ macos/Flutter/GeneratedPluginRegistrant.swift
 .history
 .svn/
 migrate_working_dir/
+
+# Screenshot tooling
+node_modules/
+package.json
+package-lock.json
+take_screenshots.mjs
+screenshots/
