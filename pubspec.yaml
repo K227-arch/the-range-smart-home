@@ -1,0 +1,37 @@
+name: the_range_smart_home
+description: THE RANGE Smart Home — One ecosystem for the whole home.
+version: 1.0.0+1
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI & icons
+  cupertino_icons: ^1.0.6
+  flutter_svg: ^2.0.9
+  google_fonts: ^6.1.0
+
+  # Charts for energy screen
+  fl_chart: ^0.66.2
+
+  # State management
+  provider: ^6.1.1
+
+  # Misc
+  intl: ^0.19.0
+  percent_indicator: ^4.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
