@@ -21,6 +21,9 @@ enum DeviceStatus { online, offline, error }
 
 enum ProtocolType { wifi, zigbee, bluetooth }
 
+/// Tracks whether a NAJOD/SnarF technician has set up the device.
+enum InstallationStatus { notInstalled, scheduled, installed }
+
 class Device {
   final String id;
   final String name;
@@ -33,6 +36,16 @@ class Device {
   final IconData icon;
   final Color iconColor;
 
+  // ── SnarF-specific fields ─────────────────────────────────────────────────
+  /// True when device has confirmed internet + remote access available.
+  final bool remoteAccess;
+
+  /// Live wattage reading (sockets only). null = no monitoring.
+  final double? powerWatts;
+
+  /// NAJOD installation tracking.
+  final InstallationStatus installationStatus;
+
   Device({
     required this.id,
     required this.name,
@@ -44,18 +57,31 @@ class Device {
     required this.icon,
     required this.iconColor,
     this.attributes = const {},
+    this.remoteAccess = true,
+    this.powerWatts,
+    this.installationStatus = InstallationStatus.installed,
   });
 
-  Device copyWith({bool? isOn}) => Device(
+  Device copyWith({
+    bool? isOn,
+    DeviceStatus? status,
+    bool? remoteAccess,
+    double? powerWatts,
+    InstallationStatus? installationStatus,
+  }) =>
+      Device(
         id: id,
         name: name,
         room: room,
         type: type,
-        status: status,
+        status: status ?? this.status,
         protocol: protocol,
         isOn: isOn ?? this.isOn,
         icon: icon,
         iconColor: iconColor,
         attributes: attributes,
+        remoteAccess: remoteAccess ?? this.remoteAccess,
+        powerWatts: powerWatts ?? this.powerWatts,
+        installationStatus: installationStatus ?? this.installationStatus,
       );
 }

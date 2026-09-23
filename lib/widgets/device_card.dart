@@ -16,26 +16,31 @@ class DeviceCard extends StatelessWidget {
     this.onTap,
   });
 
+  bool get _isOverloaded =>
+      device.type == DeviceType.socket &&
+      (device.powerWatts ?? 0) > 3000;
+
   @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
     final isOn = device.isOn;
 
-    // Dark: card bg is bgCard (on) / bgCardLight (off)
-    // Light: white (on) / F8FAFC (off)
     final cardColor = isOn
         ? (th.isDark ? AppColors.bgCard : Colors.white)
         : (th.isDark ? AppColors.bgCardLight : const Color(0xFFF8FAFC));
 
-    final borderColor = isOn
-        ? AppColors.primary.withValues(alpha: 0.15)
-        : th.borderColor;
+    // Overloaded sockets get a red border
+    final borderColor = _isOverloaded
+        ? AppColors.accentRed.withValues(alpha: 0.5)
+        : isOn
+            ? AppColors.primary.withValues(alpha: 0.15)
+            : th.borderColor;
 
     final shadow = isOn
         ? [
             BoxShadow(
-              color: AppColors.primary.withValues(
-                  alpha: th.isDark ? 0.12 : 0.08),
+              color: (_isOverloaded ? AppColors.accentRed : AppColors.primary)
+                  .withValues(alpha: th.isDark ? 0.12 : 0.08),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -61,20 +66,41 @@ class DeviceCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: isOn
-                        ? device.iconColor.withValues(alpha: 0.12)
-                        : th.chipBg,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    device.icon,
-                    color: isOn ? device.iconColor : th.textHint,
-                    size: 20,
-                  ),
+                Stack(
+                  children: [
+                    Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: isOn
+                            ? device.iconColor.withValues(alpha: 0.12)
+                            : th.chipBg,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        device.icon,
+                        color: isOn ? device.iconColor : th.textHint,
+                        size: 20,
+                      ),
+                    ),
+                    // Remote access dot — top-right of icon
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Container(
+                        width: 9,
+                        height: 9,
+                        decoration: BoxDecoration(
+                          color: device.remoteAccess
+                              ? AppColors.active
+                              : AppColors.accentRed,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: cardColor, width: 1.5),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 _SmallToggle(isOn: isOn, onTap: onToggle),
               ],
@@ -100,8 +126,8 @@ class DeviceCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     device.room,
-                    style: GoogleFonts.inter(
-                        fontSize: 11, color: th.textHint),
+                    style:
+                        GoogleFonts.inter(fontSize: 11, color: th.textHint),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -110,9 +136,9 @@ class DeviceCard extends StatelessWidget {
               ],
             ),
 
-            if (isOn && device.attributes.isNotEmpty) ...[
+            if (isOn) ...[
               const SizedBox(height: 4),
-              _buildAttribute(th),
+              _buildStatus(th),
             ],
           ],
         ),
@@ -120,42 +146,79 @@ class DeviceCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAttribute(ThemeHelper th) {
-    final attrs = device.attributes;
-    if (device.type == DeviceType.thermostat) {
-      return Text(
-        '${attrs['temp']}°C · ${attrs['mode']}',
-        style: GoogleFonts.inter(
-            fontSize: 11,
-            color: AppColors.primary,
-            fontWeight: FontWeight.w500),
-      );
-    } else if (device.type == DeviceType.airConditioner) {
-      return Text(
-        'Temp: ${attrs['temp']}°  Wind: ${attrs['wind']}',
-        style: GoogleFonts.inter(fontSize: 10, color: th.textHint),
-      );
-    } else if (device.type == DeviceType.light) {
+  Widget _buildStatus(ThemeHelper th) {
+    // Overload warning takes priority
+    if (_isOverloaded) {
       return Row(
         children: [
-          Icon(Icons.brightness_6_rounded, size: 11, color: th.textHint),
-          const SizedBox(width: 3),
+          const Icon(Icons.warning_amber_rounded,
+              size: 12, color: AppColors.accentRed),
+          const SizedBox(width: 4),
           Text(
-            '${attrs['brightness']}%',
-            style: GoogleFonts.inter(fontSize: 11, color: th.textHint),
+            'Overload ${device.powerWatts!.round()} W',
+            style: GoogleFonts.inter(
+                fontSize: 11,
+                color: AppColors.accentRed,
+                fontWeight: FontWeight.w700),
           ),
         ],
       );
-    } else if (device.type == DeviceType.socket) {
-      return Text(
-        '${attrs['power']} W',
-        style: GoogleFonts.inter(
-            fontSize: 11,
-            color: AppColors.accentGreen,
-            fontWeight: FontWeight.w600),
-      );
     }
-    return const SizedBox.shrink();
+
+    final attrs = device.attributes;
+    switch (device.type) {
+      case DeviceType.socket:
+        final watts = device.powerWatts ?? attrs['power'] ?? 0.0;
+        return Row(
+          children: [
+            const Icon(Icons.bolt_rounded,
+                size: 11, color: AppColors.accentYellow),
+            const SizedBox(width: 3),
+            Text(
+              '${watts is double ? watts.toStringAsFixed(1) : watts} W',
+              style: GoogleFonts.inter(
+                  fontSize: 11,
+                  color: AppColors.accentYellow,
+                  fontWeight: FontWeight.w600),
+            ),
+          ],
+        );
+      case DeviceType.light:
+        if (attrs.containsKey('brightness')) {
+          return Row(
+            children: [
+              Icon(Icons.brightness_6_rounded,
+                  size: 11, color: th.textHint),
+              const SizedBox(width: 3),
+              Text('${attrs['brightness']}%',
+                  style: GoogleFonts.inter(
+                      fontSize: 11, color: th.textHint)),
+            ],
+          );
+        }
+        return const SizedBox.shrink();
+      case DeviceType.thermostat:
+      case DeviceType.airConditioner:
+        return Text(
+          '${attrs['temp']}°C · ${attrs['mode'] ?? ''}',
+          style: GoogleFonts.inter(
+              fontSize: 11,
+              color: AppColors.primary,
+              fontWeight: FontWeight.w500),
+        );
+      default:
+        // Switches — show "Manual always works" micro hint
+        return Row(
+          children: [
+            Icon(Icons.touch_app_rounded,
+                size: 11, color: th.textHint),
+            const SizedBox(width: 3),
+            Text('Touch always active',
+                style: GoogleFonts.inter(
+                    fontSize: 10, color: th.textHint)),
+          ],
+        );
+    }
   }
 }
 
@@ -179,7 +242,8 @@ class _SmallToggle extends StatelessWidget {
         ),
         child: AnimatedAlign(
           duration: const Duration(milliseconds: 200),
-          alignment: isOn ? Alignment.centerRight : Alignment.centerLeft,
+          alignment:
+              isOn ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
             width: 16,
             height: 16,
